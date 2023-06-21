@@ -12,8 +12,9 @@
 # but the contrib modules of OpenCV like imshow() will not work.
 
 # Install Pillow and uncomment this line to access image processing.
-#from PIL import Image
-#import numpy
+from PIL import Image
+import numpy
+import cv2
 
 class Agent:
     # The default constructor for your Agent. Make sure to execute any
@@ -38,4 +39,10 @@ class Agent:
     # Do not use Absolute pathing to open files.
 
     def Solve(self,problem):
+
+        image_opt = [problem.figures["1"].visualFilename,problem.figures["2"].visualFilename,problem.figures["3"].visualFilename,problem.figures["4"].visualFilename,problem.figures["5"].visualFilename,problem.figures["6"].visualFilename]
+        im_a = problem.figures["A"].visualFilename
+        im_b = problem.figures["B"].visualFilename
+        im_c = problem.figures["C"].visualFilename
+
         return -1
