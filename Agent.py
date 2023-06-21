@@ -41,9 +41,18 @@ class Agent:
     def Solve(self,problem):
 
         #image opt = 1-6, 0 -> 1
-        image_opt = [problem.figures["1"].visualFilename,problem.figures["2"].visualFilename,problem.figures["3"].visualFilename,problem.figures["4"].visualFilename,problem.figures["5"].visualFilename,problem.figures["6"].visualFilename]
+        image_opt = [problem.figures["1"].visualFilename,
+                     problem.figures["2"].visualFilename,
+                     problem.figures["3"].visualFilename,
+                     problem.figures["4"].visualFilename,
+                     problem.figures["5"].visualFilename,
+                     problem.figures["6"].visualFilename
+        ]
+
         im_a = problem.figures["A"].visualFilename
         im_b = problem.figures["B"].visualFilename
         im_c = problem.figures["C"].visualFilename
 
         return -1
+    
+    
