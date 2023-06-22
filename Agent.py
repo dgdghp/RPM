@@ -7,14 +7,14 @@
 # def Solve(self,problem)
 #
 # These methods will be necessary for the project's main method to run.
-# Allowable libraries are Python 3.8, Pillow 8.1.0, numpy 1.19.1, and OpenCV4.2.0
+# Allowable libraries are Python 3.8, Pillow 8.1.0, np 1.19.1, and OpenCV4.2.0
 # OpenCV 4.2.0, opencv-contrib-python-headless. Non-headless versions of OpenCV will work,
 # but the contrib modules of OpenCV like imshow() will not work.
 
 # Install Pillow and uncomment this line to access image processing.
 from PIL import Image
-import numpy
-import cv2
+import numpy as np
+import cv2 as cv
 
 class Agent:
     # The default constructor for your Agent. Make sure to execute any
@@ -38,21 +38,76 @@ class Agent:
     # Use var = problem.figures["A"].visualFilename to open files
     # Do not use Absolute pathing to open files.
 
+
+    # Intake all the images and put them in a dictionary for easy access
+    # Two separate functions for 2x2 and 3x3 matrices
+
+    def Intake(self,problem):
+
+        if problem.problemType == "2x2":
+            images = {
+            "A": cv.IMREAD_GRAYSCALE(problem.figures["A"].visualFilename), 
+            "B": cv.IMREAD_GRAYSCALE(problem.figures["B"].visualFilename), 
+            "C": cv.IMREAD_GRAYSCALE(problem.figures["C"].visualFilename), 
+            "1": cv.IMREAD_GRAYSCALE(problem.figures["1"].visualFilename), 
+            "2": cv.IMREAD_GRAYSCALE(problem.figures["2"].visualFilename), 
+            "3": cv.IMREAD_GRAYSCALE(problem.figures["3"].visualFilename), 
+            "4": cv.IMREAD_GRAYSCALE(problem.figures["4"].visualFilename), 
+            "5": cv.IMREAD_GRAYSCALE(problem.figures["5"].visualFilename), 
+            "6": cv.IMREAD_GRAYSCALE(problem.figures["6"].visualFilename)
+            }
+        elif problem.problemType == "3x3":
+            images = {
+            "A": cv.IMREAD_GRAYSCALE(problem.figures["A"].visualFilename),
+            "B": cv.IMREAD_GRAYSCALE(problem.figures["B"].visualFilename),
+            "C": cv.IMREAD_GRAYSCALE(problem.figures["C"].visualFilename),
+            "D": cv.IMREAD_GRAYSCALE(problem.figures["D"].visualFilename),
+            "E": cv.IMREAD_GRAYSCALE(problem.figures["E"].visualFilename),
+            "F": cv.IMREAD_GRAYSCALE(problem.figures["F"].visualFilename),
+            "G": cv.IMREAD_GRAYSCALE(problem.figures["G"].visualFilename),
+            "H": cv.IMREAD_GRAYSCALE(problem.figures["H"].visualFilename),
+            "1": cv.IMREAD_GRAYSCALE(problem.figures["1"].visualFilename),
+            "2": cv.IMREAD_GRAYSCALE(problem.figures["2"].visualFilename),
+            "3": cv.IMREAD_GRAYSCALE(problem.figures["3"].visualFilename),
+            "4": cv.IMREAD_GRAYSCALE(problem.figures["4"].visualFilename),
+            "5": cv.IMREAD_GRAYSCALE(problem.figures["5"].visualFilename),
+            "6": cv.IMREAD_GRAYSCALE(problem.figures["6"].visualFilename),
+            "7": cv.IMREAD_GRAYSCALE(problem.figures["7"].visualFilename),
+            "8": cv.IMREAD_GRAYSCALE(problem.figures["8"].visualFilename)
+            }
+
+        return images
+
     def Solve(self,problem):
 
-        #image opt = 1-6, 0 -> 1
-        image_opt = [problem.figures["1"].visualFilename,
-                     problem.figures["2"].visualFilename,
-                     problem.figures["3"].visualFilename,
-                     problem.figures["4"].visualFilename,
-                     problem.figures["5"].visualFilename,
-                     problem.figures["6"].visualFilename
-        ]
+        images = self.Intake(problem)
 
-        im_a = problem.figures["A"].visualFilename
-        im_b = problem.figures["B"].visualFilename
-        im_c = problem.figures["C"].visualFilename
 
-        return -1
+        # DEBUGGING TESTS
+        # print(self.matchKey(problem,images,images["B"]))
+        # print(self.checkSimilarity(images["B"], images["6"]))
+        print(images["A"])
+        
+        return 2
+
+    # Return the Mean Squared Error
+    def checkSimilarity(self, arr1, arr2):
+        err = np.sum((arr1.astype("float") - arr2.astype("float")) ** 2)
+        err /= float(arr1.shape[0] * arr2.shape[1])
+        return err
+        
+    
+    # Neal's function to return the matched image
+    def matchKey(self,problem,images,im):
+        sim_array = []
+        if problem.problemType == "2x2":
+            for i in range(6):
+                sim_array.append(self.checkSimilarity(im, images[f"{i+1}"]))
+        else:
+            for i in range(8):
+                sim_array.append(self.checkSimilarity(im, images[f"{i+1}"]))
+        return np.argmin(sim_array)+1
+
+
     
     
