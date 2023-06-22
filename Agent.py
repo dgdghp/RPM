@@ -12,7 +12,7 @@
 # but the contrib modules of OpenCV like imshow() will not work.
 
 # Install Pillow and uncomment this line to access image processing.
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
 import cv2 as cv
 
@@ -35,7 +35,7 @@ class Agent:
     # Make sure to return your answer *as an integer* at the end of Solve().
     # Returning your answer as a string may cause your program to crash.
     # Remember to return the answer [Key], not the name, as the ANSWERS ARE SHUFFLED.
-    # Use var = problem.figures["A"].visualFilename to open files
+    # np.invert(Use var = problem.figures["A"].visualFilename) to open files
     # Do not use Absolute pathing to open files.
 
 
@@ -44,51 +44,59 @@ class Agent:
 
     def Intake(self,problem):
 
+        # first check if the matrix is a 2x2 or 3x3
+        # next import the image with opencv and assign it to a dictionary
+        # during the import, the image is converted to grayscale, and the array is clipped from 0-255 to 0-1
         if problem.problemType == "2x2":
             images = {
-            "A": cv.IMREAD_GRAYSCALE(problem.figures["A"].visualFilename), 
-            "B": cv.IMREAD_GRAYSCALE(problem.figures["B"].visualFilename), 
-            "C": cv.IMREAD_GRAYSCALE(problem.figures["C"].visualFilename), 
-            "1": cv.IMREAD_GRAYSCALE(problem.figures["1"].visualFilename), 
-            "2": cv.IMREAD_GRAYSCALE(problem.figures["2"].visualFilename), 
-            "3": cv.IMREAD_GRAYSCALE(problem.figures["3"].visualFilename), 
-            "4": cv.IMREAD_GRAYSCALE(problem.figures["4"].visualFilename), 
-            "5": cv.IMREAD_GRAYSCALE(problem.figures["5"].visualFilename), 
-            "6": cv.IMREAD_GRAYSCALE(problem.figures["6"].visualFilename)
+            "A": np.invert(cv.imread(problem.figures["A"].visualFilename)).clip(max=1), 
+            "B": np.invert(cv.imread(problem.figures["B"].visualFilename)).clip(max=1), 
+            "C": np.invert(cv.imread(problem.figures["C"].visualFilename)).clip(max=1), 
+            "1": np.invert(cv.imread(problem.figures["1"].visualFilename)).clip(max=1), 
+            "2": np.invert(cv.imread(problem.figures["2"].visualFilename)).clip(max=1), 
+            "3": np.invert(cv.imread(problem.figures["3"].visualFilename)).clip(max=1), 
+            "4": np.invert(cv.imread(problem.figures["4"].visualFilename)).clip(max=1), 
+            "5": np.invert(cv.imread(problem.figures["5"].visualFilename)).clip(max=1), 
+            "6": np.invert(cv.imread(problem.figures["6"].visualFilename)).clip(max=1)
             }
         elif problem.problemType == "3x3":
             images = {
-            "A": cv.IMREAD_GRAYSCALE(problem.figures["A"].visualFilename),
-            "B": cv.IMREAD_GRAYSCALE(problem.figures["B"].visualFilename),
-            "C": cv.IMREAD_GRAYSCALE(problem.figures["C"].visualFilename),
-            "D": cv.IMREAD_GRAYSCALE(problem.figures["D"].visualFilename),
-            "E": cv.IMREAD_GRAYSCALE(problem.figures["E"].visualFilename),
-            "F": cv.IMREAD_GRAYSCALE(problem.figures["F"].visualFilename),
-            "G": cv.IMREAD_GRAYSCALE(problem.figures["G"].visualFilename),
-            "H": cv.IMREAD_GRAYSCALE(problem.figures["H"].visualFilename),
-            "1": cv.IMREAD_GRAYSCALE(problem.figures["1"].visualFilename),
-            "2": cv.IMREAD_GRAYSCALE(problem.figures["2"].visualFilename),
-            "3": cv.IMREAD_GRAYSCALE(problem.figures["3"].visualFilename),
-            "4": cv.IMREAD_GRAYSCALE(problem.figures["4"].visualFilename),
-            "5": cv.IMREAD_GRAYSCALE(problem.figures["5"].visualFilename),
-            "6": cv.IMREAD_GRAYSCALE(problem.figures["6"].visualFilename),
-            "7": cv.IMREAD_GRAYSCALE(problem.figures["7"].visualFilename),
-            "8": cv.IMREAD_GRAYSCALE(problem.figures["8"].visualFilename)
+            "A": np.invert(cv.imread(problem.figures["A"].visualFilename)).clip(max=1),
+            "B": np.invert(cv.imread(problem.figures["B"].visualFilename)).clip(max=1),
+            "C": np.invert(cv.imread(problem.figures["C"].visualFilename)).clip(max=1),
+            "D": np.invert(cv.imread(problem.figures["D"].visualFilename)).clip(max=1),
+            "E": np.invert(cv.imread(problem.figures["E"].visualFilename)).clip(max=1),
+            "F": np.invert(cv.imread(problem.figures["F"].visualFilename)).clip(max=1),
+            "G": np.invert(cv.imread(problem.figures["G"].visualFilename)).clip(max=1),
+            "H": np.invert(cv.imread(problem.figures["H"].visualFilename)).clip(max=1),
+            "1": np.invert(cv.imread(problem.figures["1"].visualFilename)).clip(max=1),
+            "2": np.invert(cv.imread(problem.figures["2"].visualFilename)).clip(max=1),
+            "3": np.invert(cv.imread(problem.figures["3"].visualFilename)).clip(max=1),
+            "4": np.invert(cv.imread(problem.figures["4"].visualFilename)).clip(max=1),
+            "5": np.invert(cv.imread(problem.figures["5"].visualFilename)).clip(max=1),
+            "6": np.invert(cv.imread(problem.figures["6"].visualFilename)).clip(max=1),
+            "7": np.invert(cv.imread(problem.figures["7"].visualFilename)).clip(max=1),
+            "8": np.invert(cv.imread(problem.figures["8"].visualFilename)).clip(max=1)
             }
 
         return images
 
-    def Solve(self,problem):
 
+    def Solve(self,problem):
         images = self.Intake(problem)
 
 
-        # DEBUGGING TESTS
+        #       ~~DEBUGGING TESTS~~
         # print(self.matchKey(problem,images,images["B"]))
-        # print(self.checkSimilarity(images["B"], images["6"]))
-        print(images["A"])
+        # print(self.checkSimilarity(images["B"], images["2"]))
+        # print(images["A"])
+
+        guessKey = self.checkEquivalence(problem, images)
+        #if guessKey != 0:
+        #    return guessKey
         
-        return 2
+        print(guessKey)
+        return guessKey
 
     # Return the Mean Squared Error
     def checkSimilarity(self, arr1, arr2):
@@ -106,8 +114,29 @@ class Agent:
         else:
             for i in range(8):
                 sim_array.append(self.checkSimilarity(im, images[f"{i+1}"]))
+
+        # print(sim_array)
         return np.argmin(sim_array)+1
 
+
+    def checkEquivalence(self, problem, images):
+        if self.checkSimilarity(images["A"], images["B"]) < 0.04:
+            return self.matchKey(problem, images, images["C"])
+        elif self.checkSimilarity(images["A"], images["C"]) < 0.04:
+            return self.matchKey(problem, images, images["B"])
+        else:
+            return 0
+
+        pass
+
+    def checkSymmetry():
+        pass
+
+    def checkFill():
+        pass
+
+    def shapeSubtraction():
+        pass
 
     
     
