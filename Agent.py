@@ -49,40 +49,42 @@ class Agent:
         # during the import, the image is converted to grayscale, and the array is clipped from 0-255 to 0-1
         if problem.problemType == "2x2":
             images = {
-            "A": np.invert(cv.imread(problem.figures["A"].visualFilename)).clip(max=1), 
-            "B": np.invert(cv.imread(problem.figures["B"].visualFilename)).clip(max=1), 
-            "C": np.invert(cv.imread(problem.figures["C"].visualFilename)).clip(max=1), 
-            "1": np.invert(cv.imread(problem.figures["1"].visualFilename)).clip(max=1), 
-            "2": np.invert(cv.imread(problem.figures["2"].visualFilename)).clip(max=1), 
-            "3": np.invert(cv.imread(problem.figures["3"].visualFilename)).clip(max=1), 
-            "4": np.invert(cv.imread(problem.figures["4"].visualFilename)).clip(max=1), 
-            "5": np.invert(cv.imread(problem.figures["5"].visualFilename)).clip(max=1), 
-            "6": np.invert(cv.imread(problem.figures["6"].visualFilename)).clip(max=1)
+            "A": np.invert(cv.cvtColor(cv.imread(problem.figures["A"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)), 
+            "B": np.invert(cv.cvtColor(cv.imread(problem.figures["B"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)), 
+            "C": np.invert(cv.cvtColor(cv.imread(problem.figures["C"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)), 
+            "1": np.invert(cv.cvtColor(cv.imread(problem.figures["1"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)), 
+            "2": np.invert(cv.cvtColor(cv.imread(problem.figures["2"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)), 
+            "3": np.invert(cv.cvtColor(cv.imread(problem.figures["3"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)), 
+            "4": np.invert(cv.cvtColor(cv.imread(problem.figures["4"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)), 
+            "5": np.invert(cv.cvtColor(cv.imread(problem.figures["5"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)), 
+            "6": np.invert(cv.cvtColor(cv.imread(problem.figures["6"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1))
             }
         elif problem.problemType == "3x3":
             images = {
-            "A": np.invert(cv.imread(problem.figures["A"].visualFilename)).clip(max=1),
-            "B": np.invert(cv.imread(problem.figures["B"].visualFilename)).clip(max=1),
-            "C": np.invert(cv.imread(problem.figures["C"].visualFilename)).clip(max=1),
-            "D": np.invert(cv.imread(problem.figures["D"].visualFilename)).clip(max=1),
-            "E": np.invert(cv.imread(problem.figures["E"].visualFilename)).clip(max=1),
-            "F": np.invert(cv.imread(problem.figures["F"].visualFilename)).clip(max=1),
-            "G": np.invert(cv.imread(problem.figures["G"].visualFilename)).clip(max=1),
-            "H": np.invert(cv.imread(problem.figures["H"].visualFilename)).clip(max=1),
-            "1": np.invert(cv.imread(problem.figures["1"].visualFilename)).clip(max=1),
-            "2": np.invert(cv.imread(problem.figures["2"].visualFilename)).clip(max=1),
-            "3": np.invert(cv.imread(problem.figures["3"].visualFilename)).clip(max=1),
-            "4": np.invert(cv.imread(problem.figures["4"].visualFilename)).clip(max=1),
-            "5": np.invert(cv.imread(problem.figures["5"].visualFilename)).clip(max=1),
-            "6": np.invert(cv.imread(problem.figures["6"].visualFilename)).clip(max=1),
-            "7": np.invert(cv.imread(problem.figures["7"].visualFilename)).clip(max=1),
-            "8": np.invert(cv.imread(problem.figures["8"].visualFilename)).clip(max=1)
+            "A": np.invert(cv.cvtColor(cv.imread(problem.figures["A"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "B": np.invert(cv.cvtColor(cv.imread(problem.figures["B"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "C": np.invert(cv.cvtColor(cv.imread(problem.figures["C"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "D": np.invert(cv.cvtColor(cv.imread(problem.figures["D"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "E": np.invert(cv.cvtColor(cv.imread(problem.figures["E"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "F": np.invert(cv.cvtColor(cv.imread(problem.figures["F"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "G": np.invert(cv.cvtColor(cv.imread(problem.figures["G"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "H": np.invert(cv.cvtColor(cv.imread(problem.figures["H"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "1": np.invert(cv.cvtColor(cv.imread(problem.figures["1"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "2": np.invert(cv.cvtColor(cv.imread(problem.figures["2"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "3": np.invert(cv.cvtColor(cv.imread(problem.figures["3"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "4": np.invert(cv.cvtColor(cv.imread(problem.figures["4"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "5": np.invert(cv.cvtColor(cv.imread(problem.figures["5"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "6": np.invert(cv.cvtColor(cv.imread(problem.figures["6"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "7": np.invert(cv.cvtColor(cv.imread(problem.figures["7"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)),
+            "8": np.invert(cv.cvtColor(cv.imread(problem.figures["8"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1))
             }
 
         return images
 
 
     def Solve(self,problem):
+        global tolerance
+        tolerance = 0.04
         images = self.Intake(problem)
 
 
@@ -127,10 +129,10 @@ class Agent:
         else:
             return 0
 
-        pass
 
-    def checkSymmetry():
-        pass
+    def checkSymmetry(self, problem, images):
+        if self.checkSimilarity(np.fliplr(images["B"]), images["A"]) < tolerance:
+            return problem.figures["A"].visualFilename + " -> symmetrical"
 
     def checkFill():
         pass
