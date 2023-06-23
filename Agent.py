@@ -48,7 +48,7 @@ class Agent:
             # pretty much we are just getting this variable from the Intake() function
             images = self.Intake(problem)
             # Use the checkEquivalence() function to make a final guess
-            guessKey = self.checkEquivalence(problem, images)
+            guessKey = self.checkSymmetry(problem, images)
 
         
 
@@ -126,15 +126,28 @@ class Agent:
 
     # Using the previous MSE function, return the most similar image under the threshold, "tolerance"
     def matchKey(self,problem,images,im):
-        sim_array = []
-        if problem.problemType == "2x2":
-            for i in range(6):
-                sim_array.append(self.checkSimilarity(im, images[f"{i+1}"]))
-        else:
-            for i in range(8):
-                sim_array.append(self.checkSimilarity(im, images[f"{i+1}"]))
 
-        return np.argmin(sim_array)+1
+        # instead of appending to array, set to variable if it is smallest
+
+        sim_array = []
+
+        minError = self.checkSimilarity(im, images["1"])
+        minErrorindex = 0
+
+        if problem.problemType == "2x2":
+            for i in range(1, 6):
+                if self.checkSimilarity(im, images[f"{i+1}"]) < minError:
+                    minError = self.checkSimilarity(im, images[f"{i+1}"])
+                    minErrorindex = i
+                
+                # sim_array.append(self.checkSimilarity(im, images[f"{i+1}"]))
+        else:
+            for i in range(1, 8):
+                if self.checkSimilarity(im, images[f"{i+1}"]) < minError:
+                    minError = self.checkSimilarity(im, images[f"{i+1}"])
+                    minErrorindex = i
+
+        return minErrorindex+1
 
 
 
@@ -152,15 +165,16 @@ class Agent:
     # 1 = horizontal symmetry
     # 2 = vertical symmetry
     def getSymmetry(self, im1, im2):
-        if self.getSimilarity(np.fliplr(im2), im1) < tolerance:
+        if self.checkSimilarity(np.fliplr(im2), im1) < tolerance:
             return 1
-        if self.getSimilarity(np.flipud(im2), im1) < tolerance:
+        if self.checkSimilarity(np.flipud(im2), im1) < tolerance:
             return 2
         else:
             return 0
         
     # Compares symetry from A -> B and A -> C
     def checkSymmetry(self, problem, images):
+
         # checks for a - b symmetry and applies to c
         if (self.getSymmetry(images["A"], images["B"]) == 1):
             return self.matchKey(problem,images,np.fliplr(images["C"]))
