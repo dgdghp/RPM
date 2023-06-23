@@ -44,6 +44,8 @@ class Agent:
             # Create a tolerance variable for the MSE function shown later, just for ease of access
             global tolerance
             tolerance = 0.04
+            
+            global threshold
 
             # pretty much we are just getting this variable from the Intake() function
             images = self.Intake(problem)
@@ -58,11 +60,11 @@ class Agent:
             # print(images["A"])
             # print(self.checkSymmetry(images["A"], images["B"]))
             # print(self.getSimilarity(np.fliplr(im2),im1))
-            print(guessKey)
+            # print(guessKey)
+            # self.saveAsCSV(images["B"], "B")
             #       ~~ END DEBUGGING TESTS ~~
 
 
-            # self.saveAsCSV(images["A"], "A")
 
             # This is the final return statement that will submit the answers
             return guessKey
@@ -184,6 +186,7 @@ class Agent:
             return self.matchKey(problem, images, np.fliplr(images["B"]))
         if (self.getSymmetry(images["A"], images["C"] == 2)):
             return self.matchKey(problem, images, np.flipud(images["B"]))
+        
         return 0
 
 
@@ -194,7 +197,7 @@ class Agent:
         pass
 
     def saveAsCSV(self, im, letter):
-        np.savetxt(f"img_{letter}.csv", im, delimiter=",")
+        np.savetxt(f"img_{letter}.csv", im, fmt='%d', delimiter=",")
 
     
     
