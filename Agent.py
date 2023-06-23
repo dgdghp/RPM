@@ -41,11 +41,22 @@ class Agent:
     # 
     def Solve(self,problem):
 
+            # TEST code for later            
+            # testSingle, testName = 1, "Problem B-06"
+            # if testSingle == True:
+            #     if problem.problemName != testName:
+
+
+
             # Create a tolerance variable for the MSE function shown later, just for ease of access
             global tolerance
             tolerance = 0.04
             
-            global threshold
+            # global threshold
+            # threshold = 
+
+            # global threshMulti
+            # threshMulti = 1000
 
             # pretty much we are just getting this variable from the Intake() function
             images = self.Intake(problem)
@@ -62,17 +73,18 @@ class Agent:
             # print(self.getSimilarity(np.fliplr(im2),im1))
             # print(guessKey)
             # self.saveAsCSV(images["B"], "B")
+            # print(self.isIdentical(images["A"], images["B"]))
             #       ~~ END DEBUGGING TESTS ~~
 
 
 
             # This is the final return statement that will submit the answers
+            # return guessKey
             return guessKey
 
 
     # Intake all the images and put them in a dictionary for easy access
     # Two separate functions for 2x2 and 3x3 matrices
-
     def Intake(self,problem):
 
         # first check if the matrix is a 2x2 or 3x3
@@ -125,6 +137,9 @@ class Agent:
         err = np.sum((arr1.astype("float") - arr2.astype("float")) ** 2)
         err /= float(arr1.shape[0] * arr2.shape[1])
         return err
+    
+    def isIdentical(self, im1, im2):
+        return self.checkSimilarity(im1, im2) < tolerance
         
     
 
@@ -165,9 +180,9 @@ class Agent:
     # 1 = horizontal symmetry
     # 2 = vertical symmetry
     def getSymmetry(self, im1, im2):
-        if self.checkSimilarity(np.fliplr(im2), im1) < tolerance:
+        if self.isIdentical(np.fliplr(im2), im1):
             return 1
-        if self.checkSimilarity(np.flipud(im2), im1) < tolerance:
+        if self.isIdentical(np.flipud(im2), im1):
             return 2
         else:
             return 0
