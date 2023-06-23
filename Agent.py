@@ -38,6 +38,33 @@ class Agent:
     # np.invert(Use var = problem.figures["A"].visualFilename) to open files
     # Do not use Absolute pathing to open files.
 
+    # 
+    def Solve(self,problem):
+
+            # Create a tolerance variable for the MSE function shown later, just for ease of access
+            global tolerance
+            tolerance = 0.04
+
+            # pretty much we are just getting this variable from the Intake() function
+            images = self.Intake(problem)
+            # Use the checkEquivalence() function to make a final guess
+            guessKey = self.checkEquivalence(problem, images)
+
+        
+
+            #       ~~ BEGIN DEBUGGING TESTS ~~
+            # print(self.matchKey(problem,images,images["B"]))
+            # print(self.checkSimilarity(images["B"], images["A"]))
+            # print(type(images["A"]))
+            # print(self.checkSymmetry(images["A"], images["B"]))
+            # print(self.getSimilarity(np.fliplr(im2),im1))
+            print(guessKey)
+            #       ~~ END DEBUGGING TESTS ~~
+
+
+            # This is the final return statement that will submit the answers
+            return guessKey
+
 
     # Intake all the images and put them in a dictionary for easy access
     # Two separate functions for 2x2 and 3x3 matrices
@@ -46,7 +73,9 @@ class Agent:
 
         # first check if the matrix is a 2x2 or 3x3
         # next import the image with opencv and assign it to a dictionary
-        # during the import, the image is converted to grayscale, and the array is clipped from 0-255 to 0-1
+        # during the import, the image is converted to grayscale, inverted, and the array is clipped from 0-255 to 0-1
+        # NOTE put this stuff in a separate file later possible
+
         if problem.problemType == "2x2":
             images = {
             "A": np.invert(cv.cvtColor(cv.imread(problem.figures["A"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1)), 
@@ -79,35 +108,23 @@ class Agent:
             "8": np.invert(cv.cvtColor(cv.imread(problem.figures["8"].visualFilename), cv.COLOR_BGR2GRAY).clip(max=1))
             }
 
+        # Return the variable images, which is an array of uint8 values
         return images
 
 
-    def Solve(self,problem):
-        global tolerance
-        tolerance = 0.04
-        images = self.Intake(problem)
+    
 
 
-        #       ~~DEBUGGING TESTS~~
-        # print(self.matchKey(problem,images,images["B"]))
-        # print(self.checkSimilarity(images["B"], images["2"]))
-        # print(images["A"])
 
-        guessKey = self.checkEquivalence(problem, images)
-        #if guessKey != 0:
-        #    return guessKey
-        
-        print(guessKey)
-        return guessKey
-
-    # Return the Mean Squared Error
+    # Return the Mean Squared Error, or basically how similar images are
     def checkSimilarity(self, arr1, arr2):
         err = np.sum((arr1.astype("float") - arr2.astype("float")) ** 2)
         err /= float(arr1.shape[0] * arr2.shape[1])
         return err
         
     
-    # Neal's function to return the matched image
+
+    # Using the previous MSE function, return the most similar image under the threshold, "tolerance"
     def matchKey(self,problem,images,im):
         sim_array = []
         if problem.problemType == "2x2":
@@ -117,10 +134,11 @@ class Agent:
             for i in range(8):
                 sim_array.append(self.checkSimilarity(im, images[f"{i+1}"]))
 
-        # print(sim_array)
         return np.argmin(sim_array)+1
 
 
+
+    # Combines checkSimilarity and matchKey in order to return a guess of the image that the input image matches
     def checkEquivalence(self, problem, images):
         if self.checkSimilarity(images["A"], images["B"]) < 0.04:
             return self.matchKey(problem, images, images["C"])
@@ -129,10 +147,33 @@ class Agent:
         else:
             return 0
 
-
+    # returns which type of symmetry (vertical or horizontal) the image has, if any
+    # 0 = no symmetry detected
+    # 1 = horizontal symmetry
+    # 2 = vertical symmetry
+    def getSymmetry(self, im1, im2):
+        if self.getSimilarity(np.fliplr(im2), im1) < tolerance:
+            return 1
+        if self.getSimilarity(np.flipud(im2), im1) < tolerance:
+            return 2
+        else:
+            return 0
+        
+    # Compares symetry from A -> B and A -> C
     def checkSymmetry(self, problem, images):
-        if self.checkSimilarity(np.fliplr(images["B"]), images["A"]) < tolerance:
-            return problem.figures["A"].visualFilename + " -> symmetrical"
+        # checks for a - b symmetry and applies to c
+        if (self.getSymmetry(images["A"], images["B"]) == 1):
+            return self.matchKey(problem,images,np.fliplr(images["C"]))
+        if (self.getSymmetry(images["A"], images["B"]) == 2):
+            return self.matchKey(problem, images, np.flipud(images["C"]))
+        
+        # checks for a - c symmetry and applies to b
+        if (self.getSymmetry(images["A"], images["C"] == 1)):
+            return self.matchKey(problem, images, np.fliplr(images["B"]))
+        if (self.getSymmetry(images["A"], images["C"] == 2)):
+            return self.matchKey(problem, images, np.flipud(images["B"]))
+        return 0
+
 
     def checkFill():
         pass
