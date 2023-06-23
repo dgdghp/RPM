@@ -189,17 +189,20 @@ class Agent:
         
     # Compares symetry from A -> B and A -> C
     def checkSymmetry(self, problem, images):
+        abSim = self.getSymmetry(images["A"], images["B"])
 
         # checks for a - b symmetry and applies to c
-        if (self.getSymmetry(images["A"], images["B"]) == 1):
+        if (abSim == 1):
             return self.matchKey(problem,images,np.fliplr(images["C"]))
-        if (self.getSymmetry(images["A"], images["B"]) == 2):
+        if (abSim == 2):
             return self.matchKey(problem, images, np.flipud(images["C"]))
         
+        acSim = self.getSymmetry(images["A"], images["C"])
+
         # checks for a - c symmetry and applies to b
-        if (self.getSymmetry(images["A"], images["C"] == 1)):
+        if (acSim == 1):
             return self.matchKey(problem, images, np.fliplr(images["B"]))
-        if (self.getSymmetry(images["A"], images["C"] == 2)):
+        if (acSim == 2):
             return self.matchKey(problem, images, np.flipud(images["B"]))
         
         return 0
