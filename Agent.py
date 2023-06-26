@@ -50,7 +50,7 @@ class Agent:
 
             # Create a tolerance variable for the MSE function shown later, just for ease of access
             global tolerance
-            tolerance = 0.04
+            tolerance = 0.0283
 
             # pretty much we are just getting this variable from the Intake() function
             images = self.Intake(problem)
@@ -65,7 +65,7 @@ class Agent:
             # print(self.matchKey(problem,images,images["B"]))
             # print(self.mse(images["B"], images["A"]))
             # print(images["A"])
-            # print(self.checkSymmetry(images["A"], images["B"]))
+            print(self.checkSymmetry(images["A"], images["B"]))
             # print(self.getSimilarity(np.fliplr(im2),im1))
             # print(guessKey)
             # self.saveAsCSV(images["B"], "B")
