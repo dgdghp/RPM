@@ -51,29 +51,26 @@ class Agent:
             # Create a tolerance variable for the MSE function shown later, just for ease of access
             global tolerance
             tolerance = 0.04
-            
-            # global threshold
-            # threshold = 
-
-            # global threshMulti
-            # threshMulti = 1000
 
             # pretty much we are just getting this variable from the Intake() function
             images = self.Intake(problem)
+
             # Use the checkEquivalence() function to make a final guess
             guessKey = self.checkSymmetry(problem, images)
 
         
 
             #       ~~ BEGIN DEBUGGING TESTS ~~
+
             # print(self.matchKey(problem,images,images["B"]))
-            # print(self.checkSimilarity(images["B"], images["A"]))
+            # print(self.mse(images["B"], images["A"]))
             # print(images["A"])
             # print(self.checkSymmetry(images["A"], images["B"]))
             # print(self.getSimilarity(np.fliplr(im2),im1))
             # print(guessKey)
             # self.saveAsCSV(images["B"], "B")
             # print(self.isIdentical(images["A"], images["B"]))
+
             #       ~~ END DEBUGGING TESTS ~~
 
 
@@ -133,44 +130,43 @@ class Agent:
 
 
     # Return the Mean Squared Error, or basically how similar images are
-    def checkSimilarity(self, arr1, arr2):
+    def mse(self, arr1, arr2):
         err = np.sum((arr1.astype("float") - arr2.astype("float")) ** 2)
         err /= float(arr1.shape[0] * arr2.shape[1])
         return err
     
+    # Just return if the two input images are "identical", or if they are under the tolerance
     def isIdentical(self, im1, im2):
-        return self.checkSimilarity(im1, im2) < tolerance
-        
+        return self.mse(im1, im2) < tolerance   
     
 
     # Using the previous MSE function, return the most similar image under the threshold, "tolerance"
     def matchKey(self,problem,images,im):
 
-        minError = self.checkSimilarity(im, images["1"])
+        minError = self.mse(im, images["1"])
         minErrorindex = 0
 
         if problem.problemType == "2x2":
             for i in range(1, 6):
-                if self.checkSimilarity(im, images[f"{i+1}"]) < minError:
-                    minError = self.checkSimilarity(im, images[f"{i+1}"])
+                if self.mse(im, images[f"{i+1}"]) < minError:
+                    minError = self.mse(im, images[f"{i+1}"])
                     minErrorindex = i
                 
-                # sim_array.append(self.checkSimilarity(im, images[f"{i+1}"]))
-        else:
+        elif problem.problemType == "3x3":
             for i in range(1, 8):
-                if self.checkSimilarity(im, images[f"{i+1}"]) < minError:
-                    minError = self.checkSimilarity(im, images[f"{i+1}"])
+                if self.mse(im, images[f"{i+1}"]) < minError:
+                    minError = self.mse(im, images[f"{i+1}"])
                     minErrorindex = i
 
         return minErrorindex + 1
 
 
 
-    # Combines checkSimilarity and matchKey in order to return a guess of the image that the input image matches
+    # Combines mse and matchKey in order to return a guess of the image that the input image matches
     def checkEquivalence(self, problem, images):
-        if self.checkSimilarity(images["A"], images["B"]) < 0.04:
+        if self.mse(images["A"], images["B"]) < 0.04:
             return self.matchKey(problem, images, images["C"])
-        elif self.checkSimilarity(images["A"], images["C"]) < 0.04:
+        elif self.mse(images["A"], images["C"]) < 0.04:
             return self.matchKey(problem, images, images["B"])
         else:
             return 0
@@ -188,6 +184,7 @@ class Agent:
             return 0
         
     # Compares symetry from A -> B and A -> C
+    # This function combines all the previous ones
     def checkSymmetry(self, problem, images):
         abSim = self.getSymmetry(images["A"], images["B"])
 
@@ -205,6 +202,7 @@ class Agent:
         if (acSim == 2):
             return self.matchKey(problem, images, np.flipud(images["B"]))
         
+        # Return 0 if no symmetry
         return 0
 
 
