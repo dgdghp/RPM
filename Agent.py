@@ -65,11 +65,12 @@ class Agent:
             # print(self.matchKey(problem,images,images["B"]))
             # print(self.mse(images["B"], images["A"]))
             # print(images["A"])
-            print(self.checkSymmetry(images["A"], images["B"]))
+            # print(self.checkSymmetry(images["A"], images["1"]))
             # print(self.getSimilarity(np.fliplr(im2),im1))
             # print(guessKey)
             # self.saveAsCSV(images["B"], "B")
             # print(self.isIdentical(images["A"], images["B"]))
+            self.checkDifference(images["A"], images["B"])
 
             #       ~~ END DEBUGGING TESTS ~~
 
@@ -141,8 +142,9 @@ class Agent:
     
 
     # Using the previous MSE function, return the most similar image under the threshold, "tolerance"
-    def matchKey(self,problem,images,im):
+    def matchKey(self, problem, images, im):
 
+        # Benchmark error level
         minError = self.mse(im, images["1"])
         minErrorindex = 0
 
@@ -186,15 +188,22 @@ class Agent:
     # Compares symetry from A -> B and A -> C
     # This function combines all the previous ones
     def checkSymmetry(self, problem, images):
+        # print(images["A"])
+        # print(type(images["A"]))
+        # print(images["B"])
+        # print(type(images["B"]))
         abSim = self.getSymmetry(images["A"], images["B"])
+        
 
         # checks for a - b symmetry and applies to c
         if (abSim == 1):
-            return self.matchKey(problem,images,np.fliplr(images["C"]))
+            return self.matchKey(problem, images, np.fliplr(images["C"]))    
         if (abSim == 2):
             return self.matchKey(problem, images, np.flipud(images["C"]))
         
+        
         acSim = self.getSymmetry(images["A"], images["C"])
+
 
         # checks for a - c symmetry and applies to b
         if (acSim == 1):
@@ -202,15 +211,28 @@ class Agent:
         if (acSim == 2):
             return self.matchKey(problem, images, np.flipud(images["B"]))
         
+
         # Return 0 if no symmetry
         return 0
+    
+    def checkDifference(self, im1, im2):
+        # sum = np.sum(im1, im2)
+        # print(im1 - im2)
+        self.saveAsCSV((im2-im1), "combined")
+        self.saveAsCSV((im1), "1")
+        self.saveAsCSV((im2), "2")
+
+    def guessDifference(self, problem, im1, im2, im3):
+        answer = im1 + im2 + im3
 
 
-    def checkFill():
-        pass
 
-    def shapeSubtraction():
-        pass
+
+    # def checkFill():
+    #     pass
+
+    # def shapeSubtraction():
+    #     pass
 
     def saveAsCSV(self, im, letter):
         np.savetxt(f"img_{letter}.csv", im, fmt='%d', delimiter=",")
