@@ -148,7 +148,7 @@ class Agent:
     def matchKey(self, problem, images, im):
 
         # Benchmark error level
-        minError = self.mse(im, images["3"])
+        minError = self.mse(im, images["1"])
         minErrorindex = 0
 
         if problem.problemType == "2x2":
