@@ -70,7 +70,7 @@ class Agent:
             # print(guessKey)
             # self.saveAsCSV(images["B"], "B")
             # print(self.isIdentical(images["A"], images["B"]))
-            self.checkDifference(images["1"], images["B"])
+            self.checkDifference(images["A"], images["B"], images["C"])
 
             #       ~~ END DEBUGGING TESTS ~~
 
@@ -215,15 +215,12 @@ class Agent:
         # Return 0 if no symmetry
         return 0
     
-    def checkDifference(self, im1, im2):
-        # sum = np.sum(im1, im2)
-        self.saveAsCSV(((im2 * 2) - im1) + 1, "combined")
+    def checkDifference(self, im1, im2, im3):
+        
+        self.saveAsCSV(((im1 - im2) + im3).clip(max=1), "combined")
         # self.saveAsCSV(im1, "1")
         # self.saveAsCSV((im2 * 2), "2")
-        self.saveAsCSV((im2 - im1), "subtract")
-
-    def guessDifference(self, problem, im1, im2, im3):
-        answer = im1 + im2 + im3
+        # self.saveAsCSV((im2 - im1), "subtract")
 
 
 
