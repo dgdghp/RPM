@@ -70,7 +70,7 @@ class Agent:
             # print(guessKey)
             # self.saveAsCSV(images["B"], "B")
             # print(self.isIdentical(images["A"], images["B"]))
-            self.checkDifference(images["A"], images["B"], images["C"])
+            # self.checkDifference(images["A"], images["B"], images["C"])
 
             #       ~~ END DEBUGGING TESTS ~~
 
@@ -78,7 +78,10 @@ class Agent:
 
             # This is the final return statement that will submit the answers
             # return guessKey
-            return guessKey
+            if guessKey != 0:
+                return guessKey
+            else:
+                return self.checkDifference(images, problem, images["A"], images["B"], images["C"])
 
 
     # Intake all the images and put them in a dictionary for easy access
@@ -145,7 +148,7 @@ class Agent:
     def matchKey(self, problem, images, im):
 
         # Benchmark error level
-        minError = self.mse(im, images["1"])
+        minError = self.mse(im, images["3"])
         minErrorindex = 0
 
         if problem.problemType == "2x2":
@@ -215,16 +218,17 @@ class Agent:
         # Return 0 if no symmetry
         return 0
     
-    def checkDifference(self, im1, im2, im3):
-        
-        self.saveAsCSV(((im1 - im2) + im3).clip(max=1), "combined")
+    def checkDifference(self, images, problem, im1, im2, im3):
+        combinedArray = ((im2 - im1) + (im3 - im1))
+        return self.matchKey(problem, combinedArray, images)
+        # self.saveAsCSV(((im2 - im1) + (im3 - im1)).clip(max=1), "combined")
         # self.saveAsCSV(im1, "1")
         # self.saveAsCSV((im2 * 2), "2")
         # self.saveAsCSV((im2 - im1), "subtract")
 
 
-
-
+    def pixelCount(self, im):
+        pass
     # def checkFill():
     #     pass
 
