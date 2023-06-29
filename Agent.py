@@ -81,7 +81,7 @@ class Agent:
             if guessKey != 0:
                 return guessKey
             else:
-                return self.checkDifference(images, problem, images["A"], images["B"], images["C"])
+                return self.checkDifference(problem, images, images["A"], images["B"], images["C"])
 
 
     # Intake all the images and put them in a dictionary for easy access
@@ -218,13 +218,10 @@ class Agent:
         # Return 0 if no symmetry
         return 0
     
-    def checkDifference(self, images, problem, im1, im2, im3):
+    def checkDifference(self, problem, images, im1, im2, im3):
         combinedArray = ((im2 - im1) + (im3 - im1))
-        return self.matchKey(problem, combinedArray, images)
-        # self.saveAsCSV(((im2 - im1) + (im3 - im1)).clip(max=1), "combined")
-        # self.saveAsCSV(im1, "1")
-        # self.saveAsCSV((im2 * 2), "2")
-        # self.saveAsCSV((im2 - im1), "subtract")
+        self.saveAsCSV(combinedArray, "idk")
+        return self.matchKey(problem, images, combinedArray)
 
 
     def pixelCount(self, im):
