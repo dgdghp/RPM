@@ -1,4 +1,5 @@
 file = open('ProblemResults.csv', 'rt')
 data = file.read()
 words = data.split(',')
-print(str(round(((words.count('Correct') - 2) / (words.count("Incorrect") + (words.count("Correct") -2)) * 100), 2)) + "%")
+print("Answered:   " + str(round(((words.count('Correct') - 2) / (words.count("Incorrect") + (words.count("Correct") -2)) * 100), 2)) + "%")
+print("Total:      " + str(round(((words.count('Correct') - 2) / 96 * 100), 2)) + "%")
