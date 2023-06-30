@@ -50,7 +50,7 @@ class Agent:
 
             # Create a tolerance variable for the MSE function shown later, just for ease of access
             global tolerance
-            tolerance = 0.0283
+            tolerance = 0.025 # 0.0283
 
             # pretty much we are just getting this variable from the Intake() function
             images = self.Intake(problem)
@@ -163,15 +163,19 @@ class Agent:
                     minError = self.mse(im, images[f"{i+1}"])
                     minErrorindex = i
 
+        if problem.name == "Basic Problem B-11":
+            print(self.mse(im, images["1"]))
+            print(minError, minErrorindex)
+
         return minErrorindex + 1
 
 
 
     # Combines mse and matchKey in order to return a guess of the image that the input image matches
     def checkEquivalence(self, problem, images):
-        if self.mse(images["A"], images["B"]) < 0.04:
+        if self.mse(images["A"], images["B"]) < tolerance:
             return self.matchKey(problem, images, images["C"])
-        elif self.mse(images["A"], images["C"]) < 0.04:
+        elif self.mse(images["A"], images["C"]) < tolerance:
             return self.matchKey(problem, images, images["B"])
         else:
             return 0
@@ -219,8 +223,17 @@ class Agent:
         return 0
     
     def checkDifference(self, problem, images, im1, im2, im3):
-        combinedArray = ((im2 - im1) + (im3 - im1))
-        self.saveAsCSV(combinedArray, "idk")
+        # combinedArray = ((im2 - im1) + (im3 - im1))
+        combinedArray = (im1 + im2 + im3 - 2)
+        # combinedArray = combinedArray[combinedArray != 2]
+
+
+        if problem.name == "Basic Problem B-11":
+            # print(self.mse(combinedArray, images["5"]))
+            self.saveAsCSV(combinedArray[combinedArray != 2], "B-11")
+            print("ok")
+
+
         return self.matchKey(problem, images, combinedArray)
 
 
