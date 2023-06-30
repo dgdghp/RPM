@@ -48,9 +48,9 @@ class Agent:
 
 
 
-            # Create a tolerance variable for the MSE function shown later, just for ease of access
-            global tolerance
-            tolerance = 0.03  # 0.0283
+            # Create a mseTolerance variable for the MSE function shown later, just for ease of access
+            global mseTolerance
+            mseTolerance = 0.03  # 0.0283
 
             # global matrixDimensions
             # matrixDimensions = problem.problemType
@@ -62,22 +62,18 @@ class Agent:
 
             if problem.problemType == "2x2":
 
-                # This code is useless rn since the checkSymmetry guesses on all of set B no matter how i tweak the tolerance
+                # This code is useless rn since the checkSymmetry guesses on all of set B no matter how i tweak the Tolerance
+                answer = self.checkSymmetry(problem, images)
 
-                if self.checkSymmetry(problem, images) != 0:
-                    # ASK KAI HOW TO DO THIS BETTER
-                    # ASK KAI HOW TO DO THIS BETTER
-                    # ASK KAI HOW TO DO THIS BETTER
-                    # ASK KAI HOW TO DO THIS BETTER
-                    answer = self.checkSymmetry(problem, images)
-                elif self.evalDifference(problem, images, images["A"], images["B"], images["C"]) != 0:
-                    answer = self.evalDifference(problem, images, images["A"], images["B"], images["C"])
+                if answer == 0:
+                    if self.evalDifference(problem, images) != 0:
+                        answer = self.evalDifference(problem, images)
+                else:
+                    pass
             
             elif problem.problemType == "3x3":
-                # if someotherfunction()
-                # else:
-                #     answer = self.evalDifference(problem, images, images["A"], images["B"], images["C"])
-                return 0
+                self.pixelPatterns(images, problem)
+                answer = 0
 
         
 
@@ -99,10 +95,10 @@ class Agent:
 
             # This is the final return statement that will submit the answers
             # return guessKey
-            if answer != 0 and problem.problemType == "2x2":
+            if answer != 0:
                 return answer
             else:
-                return self.evalDifference(problem, images, images["A"], images["B"], images["C"])
+                return self.evalDifference(problem, images)
 
             return answer
 
@@ -162,12 +158,12 @@ class Agent:
         err /= float(arr1.shape[0] * arr2.shape[1])
         return err
     
-    # Just return if the two input images are "identical", or if they are under the tolerance
+    # Just return if the two input images are "identical", or if they are under the mseTolerance
     def isIdentical(self, im1, im2):
-        return self.mse(im1, im2) < tolerance   
+        return self.mse(im1, im2) < mseTolerance   
     
 
-    # Using the previous MSE function, return the most similar image under the threshold, "tolerance"
+    # Using the previous MSE function, return the most similar image under the threshold, "mseTolerance"
     def matchKey(self, problem, images, im):
 
         # Benchmark error level
@@ -196,9 +192,9 @@ class Agent:
 
     # Combines mse and matchKey in order to return a guess of the image that the input image matches
     def checkEquivalence(self, problem, images):
-        if self.mse(images["A"], images["B"]) < tolerance:
+        if self.mse(images["A"], images["B"]) < mseTolerance:
             return self.matchKey(problem, images, images["C"])
-        elif self.mse(images["A"], images["C"]) < tolerance:
+        elif self.mse(images["A"], images["C"]) < mseTolerance:
             return self.matchKey(problem, images, images["B"])
         else:
             return 0
@@ -248,13 +244,15 @@ class Agent:
 
         return 0
     
-    def evalDifference(self, problem, images, im1, im2, im3):
+    def evalDifference(self, problem, images):
 
-        
-        combinedArray = (im1 + im2 + im3)
+        try:
+            combinedArray = (images["A"] + images["B"] + images["C"] + images["D"] + images["E"] + images["F"] + images["G"] + images["H"])
+        except:
+            combinedArray = (images["A"] + images["B"] + images["C"])
+
         combinedArray[combinedArray == 2] = 0
         combinedArray = np.reshape(combinedArray, (184, 184)).clip(max=1)
-        
             
         # if problem.name == "Basic Problem C-01":
         #     # print(self.mse(combinedArray, images["5"]))
@@ -275,11 +273,24 @@ class Agent:
 
     def pixelCount(self, im):
         return np.sum(im)
-    # def checkFill():
-    #     pass
+    
 
-    # def shapeSubtraction():
-    #     pass
+    def pixelPatterns(self, images, problem):
+        
+        # pixelTolerance = 30
+
+        countedMatrix = [
+            self.pixelCount(images["A"]), self.pixelCount(images["B"]), self.pixelCount(images["C"]),
+            self.pixelCount(images["D"]), self.pixelCount(images["E"]), self.pixelCount(images["F"]),
+            self.pixelCount(images["G"]), self.pixelCount(images["H"])
+        ]
+
+        patternMatrix = np.multiply(countedMatrix, 1 / (np.min(countedMatrix)))
+        patternMatrix = np.reshape(np.append(np.round(patternMatrix).astype(int), None), (3, 3))
+
+        if problem.name == "Basic Problem C-01":
+            print(patternMatrix)
+
 
     def saveAsCSV(self, im, letter):
         np.savetxt(f"img_{letter}.csv", im, fmt='%d', delimiter=",")
