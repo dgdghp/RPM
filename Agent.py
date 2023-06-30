@@ -50,13 +50,34 @@ class Agent:
 
             # Create a tolerance variable for the MSE function shown later, just for ease of access
             global tolerance
-            tolerance = 0.025 # 0.0283
+            tolerance = 0.03  # 0.0283
+
+            # global matrixDimensions
+            # matrixDimensions = problem.problemType
 
             # pretty much we are just getting this variable from the Intake() function
             images = self.Intake(problem)
 
             # Use the checkEquivalence() function to make a final guess
-            guessKey = self.checkSymmetry(problem, images)
+
+            if problem.problemType == "2x2":
+
+                # This code is useless rn since the checkSymmetry guesses on all of set B no matter how i tweak the tolerance
+
+                if self.checkSymmetry(problem, images) != 0:
+                    # ASK KAI HOW TO DO THIS BETTER
+                    # ASK KAI HOW TO DO THIS BETTER
+                    # ASK KAI HOW TO DO THIS BETTER
+                    # ASK KAI HOW TO DO THIS BETTER
+                    answer = self.checkSymmetry(problem, images)
+                elif self.evalDifference(problem, images, images["A"], images["B"], images["C"]) != 0:
+                    answer = self.evalDifference(problem, images, images["A"], images["B"], images["C"])
+            
+            elif problem.problemType == "3x3":
+                # if someotherfunction()
+                # else:
+                #     answer = self.evalDifference(problem, images, images["A"], images["B"], images["C"])
+                return 0
 
         
 
@@ -70,7 +91,7 @@ class Agent:
             # print(guessKey)
             # self.saveAsCSV(images["B"], "B")
             # print(self.isIdentical(images["A"], images["B"]))
-            # self.checkDifference(images["A"], images["B"], images["C"])
+            # self.evalDifference(images["A"], images["B"], images["C"])
 
             #       ~~ END DEBUGGING TESTS ~~
 
@@ -78,10 +99,12 @@ class Agent:
 
             # This is the final return statement that will submit the answers
             # return guessKey
-            if guessKey != 0:
-                return guessKey
+            if answer != 0 and problem.problemType == "2x2":
+                return answer
             else:
-                return self.checkDifference(problem, images, images["A"], images["B"], images["C"])
+                return self.evalDifference(problem, images, images["A"], images["B"], images["C"])
+
+            return answer
 
 
     # Intake all the images and put them in a dictionary for easy access
@@ -163,9 +186,9 @@ class Agent:
                     minError = self.mse(im, images[f"{i+1}"])
                     minErrorindex = i
 
-        if problem.name == "Basic Problem B-11":
-            print(self.mse(im, images["1"]))
-            print(minError, minErrorindex)
+        # if problem.name == "Basic Problem B-11":
+        #     print(self.mse(im, images["1"]))
+        #     print(minError, minErrorindex)
 
         return minErrorindex + 1
 
@@ -220,25 +243,38 @@ class Agent:
         
 
         # Return 0 if no symmetry
+        # print(self.pixelCount(images["A"]))
+        # self.saveAsCSV(images["A"], "A")
+
         return 0
     
-    def checkDifference(self, problem, images, im1, im2, im3):
-        # combinedArray = ((im2 - im1) + (im3 - im1))
-        combinedArray = (im1 + im2 + im3 - 2)
-        # combinedArray = combinedArray[combinedArray != 2]
+    def evalDifference(self, problem, images, im1, im2, im3):
 
-
-        if problem.name == "Basic Problem B-11":
-            # print(self.mse(combinedArray, images["5"]))
-            self.saveAsCSV(combinedArray[combinedArray != 2], "B-11")
-            print("ok")
-
+        
+        combinedArray = (im1 + im2 + im3)
+        combinedArray[combinedArray == 2] = 0
+        combinedArray = np.reshape(combinedArray, (184, 184)).clip(max=1)
+        
+            
+        # if problem.name == "Basic Problem C-01":
+        #     # print(self.mse(combinedArray, images["5"]))
+        #     # self.saveAsCSV(combinedArray, "C-01")
+        #     print(self.mse(combinedArray, images[f"{i}"]))
+        #     print("ok")
 
         return self.matchKey(problem, images, combinedArray)
 
 
+    # def checkDifference(problem, images):
+    #     for i in range(1, 6):
+    #         if self.mse(combinedArray, images[f"{i}"]) :
+    #             return self.matchKey(problem, images, combinedArray)
+        
+    #     pass
+
+
     def pixelCount(self, im):
-        pass
+        return np.sum(im)
     # def checkFill():
     #     pass
 
