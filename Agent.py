@@ -73,7 +73,7 @@ class Agent:
             
             elif problem.problemType == "3x3":
                 self.pixelPatterns(images, problem)
-                answer = 0
+                answer = -1
 
         
 
@@ -94,11 +94,11 @@ class Agent:
 
 
             # This is the final return statement that will submit the answers
-            # return guessKey
-            if answer != 0:
-                return answer
-            else:
-                return self.evalDifference(problem, images)
+            
+            # if answer != 0:
+            #     return answer
+            # else:
+            #     return self.evalDifference(problem, images)
 
             return answer
 
