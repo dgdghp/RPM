@@ -72,8 +72,9 @@ class Agent:
                     pass
             
             elif problem.problemType == "3x3":
-                self.pixelPatterns(images, problem)
-                answer = -1
+                answer = self.guessPattern(images, problem)
+                
+                
 
         
 
@@ -100,12 +101,14 @@ class Agent:
             # else:
             #     return self.evalDifference(problem, images)
 
+
+            # print("Answer: " + str(answer))
             return answer
 
 
     # Intake all the images and put them in a dictionary for easy access
     # Two separate functions for 2x2 and 3x3 matrices
-    def Intake(self,problem):
+    def Intake(self, problem):
 
         # first check if the matrix is a 2x2 or 3x3
         # next import the image with opencv and assign it to a dictionary
@@ -288,8 +291,31 @@ class Agent:
         patternMatrix = np.multiply(countedMatrix, 1 / (np.min(countedMatrix)))
         patternMatrix = np.reshape(np.append(np.round(patternMatrix).astype(int), None), (3, 3))
 
-        if problem.name == "Basic Problem C-01":
-            print(patternMatrix)
+        # DEBUG
+        # if problem.name == "Basic Problem C-01":
+        #     print(patternMatrix)
+
+        return patternMatrix
+    
+    # try to find a pattern in the simplified matrix
+    def guessPattern(self, images, problem):
+        patternMatrix = self.pixelPatterns(images, problem)
+
+        col1Sum = patternMatrix[0][0] + patternMatrix[1][0] + patternMatrix[2][0]
+        col2Sum = patternMatrix[0][1] + patternMatrix[1][1] + patternMatrix[2][1]
+        row1Sum = patternMatrix[0][0] + patternMatrix[0][1] + patternMatrix[0][2]
+        row2Sum = patternMatrix[1][0] + patternMatrix[1][1] + patternMatrix[1][2]
+
+
+        if (col1Sum == col2Sum) and (patternMatrix[2][0] == patternMatrix[2][1]):
+            print("H - " + problem.name)
+            return self.matchKey(problem, images, images["H"])
+        elif (row1Sum == row2Sum) and (patternMatrix[0][2] == patternMatrix[1][2]):
+            print("F - " + problem.name)
+            return self.matchKey(problem, images, images["F"])
+        else:
+            print("no work - " + problem.name)
+            return -1
 
 
     def saveAsCSV(self, im, letter):
