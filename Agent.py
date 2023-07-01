@@ -15,6 +15,7 @@
 from PIL import Image, ImageOps
 import numpy as np
 import cv2 as cv
+import math
 
 class Agent:
     # The default constructor for your Agent. Make sure to execute any
@@ -242,7 +243,7 @@ class Agent:
         
 
         # Return 0 if no symmetry
-        # print(self.pixelCount(images["A"]))
+        # print(np.sum(images["A"]))
         # self.saveAsCSV(images["A"], "A")
 
         return 0
@@ -274,22 +275,24 @@ class Agent:
     #     pass
 
 
-    def pixelCount(self, im):
-        return np.sum(im)
+    def nearestPixelCount(self, pixelCount):
+        return (np.abs(countedMatrix - pixelCount)).argmin()
+        
+        
     
 
     def pixelPatterns(self, images, problem):
         
         # pixelTolerance = 30
-
+        global countedMatrix
         countedMatrix = [
-            self.pixelCount(images["A"]), self.pixelCount(images["B"]), self.pixelCount(images["C"]),
-            self.pixelCount(images["D"]), self.pixelCount(images["E"]), self.pixelCount(images["F"]),
-            self.pixelCount(images["G"]), self.pixelCount(images["H"])
+            np.sum(images["A"]), np.sum(images["B"]), np.sum(images["C"]),
+            np.sum(images["D"]), np.sum(images["E"]), np.sum(images["F"]),
+            np.sum(images["G"]), np.sum(images["H"])
         ]
 
         patternMatrix = np.multiply(countedMatrix, 1 / (np.min(countedMatrix)))
-        patternMatrix = np.reshape(np.append(np.round(patternMatrix).astype(int), None), (3, 3))
+        patternMatrix = np.reshape(np.append(np.round(patternMatrix, 5), None), (3, 3))
 
         # DEBUG
         # if problem.name == "Basic Problem C-01":
@@ -299,22 +302,33 @@ class Agent:
     
     # try to find a pattern in the simplified matrix
     def guessPattern(self, images, problem):
+        ratioTolerance = 0.015
         patternMatrix = self.pixelPatterns(images, problem)
 
         col1Sum = patternMatrix[0][0] + patternMatrix[1][0] + patternMatrix[2][0]
         col2Sum = patternMatrix[0][1] + patternMatrix[1][1] + patternMatrix[2][1]
         row1Sum = patternMatrix[0][0] + patternMatrix[0][1] + patternMatrix[0][2]
         row2Sum = patternMatrix[1][0] + patternMatrix[1][1] + patternMatrix[1][2]
+        # diag1Sum = patternMatrix[0][0] + patternMatrix[1][1] + patternMatrix[2][2]
+        # diag2Sum = patternMatrix[0][2] + patternMatrix[1][1] + patternMatrix[2][0]
 
 
-        if (col1Sum == col2Sum) and (patternMatrix[2][0] == patternMatrix[2][1]):
-            print("H - " + problem.name)
+        if (math.isclose(row1Sum, col1Sum, rel_tol=ratioTolerance)) and (math.isclose(patternMatrix[2][1], patternMatrix[1][2], rel_tol=ratioTolerance)):
+            unknownShape = (patternMatrix[0][2] / patternMatrix[0][0]) * patternMatrix[0][2] * np.min(countedMatrix)
+            # print(problem.name + " = " + str(self.nearestPixelCount(unknownShape) + 1))
+            # print(patternMatrix)
+            
+            return self.nearestPixelCount(unknownShape) + 1
+
+        elif (math.isclose(col1Sum, col2Sum, rel_tol=ratioTolerance)) and (math.isclose(patternMatrix[2][0], patternMatrix[2][1], rel_tol=ratioTolerance)):
+            # print("H - " + problem.name)
+            # print(patternMatrix)
             return self.matchKey(problem, images, images["H"])
-        elif (row1Sum == row2Sum) and (patternMatrix[0][2] == patternMatrix[1][2]):
-            print("F - " + problem.name)
+        elif (math.isclose(row1Sum, row2Sum, rel_tol=ratioTolerance)) and (math.isclose(patternMatrix[0][2], patternMatrix[1][2], rel_tol=ratioTolerance)):
+            # print("F - " + problem.name)
             return self.matchKey(problem, images, images["F"])
         else:
-            print("no work - " + problem.name)
+            # sprint("no work - " + problem.name)
             return -1
 
 
